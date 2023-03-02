@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { NextPage } from 'next'
-import { GetServerSideProps } from 'next'
+import { GetStaticProps } from 'next'
 import { Layout } from '../components/Layout'
 import { supabase } from '../utils/supabase'
 import { Task, Notice } from '../types/types'
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  console.log('getServerSidePropsが呼ばれました')
+export const getStaticProps: GetStaticProps = async () => {
+  console.log('getStaticPropsが呼ばれISRが呼ばれました')
 
   //supabaseからデータを取得
   const { data: tasks } = await supabase
@@ -18,20 +18,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
     .from('notices')
     .select('*')
     .order('created_at', { ascending: true })
-  return { props: { tasks, notices } }
+  //Isrの場合はrevalidateを設定する
+  return { props: { tasks, notices }, revalidate: 10 }
 }
 
-type ServerSideProps = {
+type StaticProps = {
   tasks: Task[]
   notices: Notice[]
 }
 
-const Ssr: NextPage<ServerSideProps> = ({ tasks, notices }) => {
+const Isr: NextPage<StaticProps> = ({ tasks, notices }) => {
   const router = useRouter()
   return (
     <>
-      <Layout title="SSR">
-        <p className="mb-3 text-pink-500">SSR</p>
+      <Layout title="ISR">
+        <p className="mb-3 text-indigo-500">ISR</p>
         <ul className="mb-3">
           {tasks.map((task) => {
             return (
@@ -50,23 +51,15 @@ const Ssr: NextPage<ServerSideProps> = ({ tasks, notices }) => {
             )
           })}
         </ul>
-        <Link href="/ssg" prefetch={false}>
-          <a className="my-3 text-xs">Link to ssg</a>
+        <Link href="/ssr" prefetch={false}>
+          <a className="my-3 text-xs">Link to ssr</a>
         </Link>
-        {/* prefetch={false}でクリック時にISRが発動 ちなみにtrueだとViewport表示時 */}
-        <Link href="/isr" prefetch={false}>
-          <a className="mb-3 text-xs">Link to isr</a>
-        </Link>
-        {/* prefetchは全くおこらない */}
-        <button className="mb-3 text-xs" onClick={() => router.push('/ssg')}>
-          Route to ssg
-        </button>
-        <button className="mb-3 text-xs" onClick={() => router.push('/isr')}>
-          Route to isr
+        <button className="mb-3 text-xs" onClick={() => router.push('/ssr')}>
+          Route to ssr
         </button>
       </Layout>
     </>
   )
 }
 
-export default Ssr
+export default Isr
