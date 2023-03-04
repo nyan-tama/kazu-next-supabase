@@ -3,7 +3,6 @@ import { Layout } from '@/components/Layout'
 import { useState, FormEvent } from 'react'
 import { BadgeCheckIcon, ShieldCheckIcon } from '@heroicons/react/solid'
 import { useMutateAuth } from '../hooks/useMutateAuth'
-import { spawn } from 'child_process'
 
 const Auth: NextPage = () => {
   const [isLogin, setIsLogin] = useState(true)
