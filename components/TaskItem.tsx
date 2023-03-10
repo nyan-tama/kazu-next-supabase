@@ -9,9 +9,23 @@ export const TaskItem: FC<Omit<Task, 'created_at' | 'user_id'>> = ({
   title,
 }) => {
   const update = useStore((state) => state.updateEditedTask)
+  // 一旦stateはcreate()のこと。stateでオブジェクトを作成している
+  // updateに入るものは、updateEditedTaskメソッド
+  // (payload) {
+  //   return set({
+  //       editedTask: {
+  //           id: payload.id,
+  //           title: payload.title
+  //       }
+  // });
+  // 後に
+  // update({ id, title })}とて呼出す
+
+
   const { deleteTaskMutation } = useMutateTask()
 
   return (
+    
     <li className="my-3 text-lg font-extrabold">
       <span>{title}</span>
       <div className="float-right ml-20 flex">
